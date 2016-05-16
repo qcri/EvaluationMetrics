@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import qa.qf.qcri.iyas.evaluation.ir.MeanAvgPrecision;
+import qa.qf.qcri.iyas.evaluation.ir.MeanReciprocalRank;
 
 
 /**
@@ -23,7 +24,6 @@ import qa.qf.qcri.iyas.evaluation.ir.MeanAvgPrecision;
  * @author albarron
  * Qatar Computing Research Institute, 2016
  */
-@SuppressWarnings("deprecation")
 public class CqaEcml2016Scorer {
 
   /** The gold labels to compute the average precision values against */
@@ -58,11 +58,23 @@ public class CqaEcml2016Scorer {
     return MeanAvgPrecision.computeWithMapRankings(lRankings, goldLabels);
   }
 
+  public double getMrr(String file) {
+    //Map<String, Double> precs = new HashMap<String, Double>();
+    Map<String, Map<String, Double>> rankings = 
+        CqaEcml2016ScoreFileReader.getScoresPerQuery(file);
+    
+    List<Map<String, Double>> lRankings = new ArrayList<Map<String, Double>>();
+    for (String k : rankings.keySet()) {
+      lRankings.add(rankings.get(k));
+    }
+    return MeanReciprocalRank.computeWithMapRankings(lRankings, goldLabels);
+  }
+  
   public static void main(String[] args) {
     String goldFile =null;;
     String predFile1=null;
     // create the command line parser
-    CommandLineParser parser = new BasicParser();
+    CommandLineParser parser = new DefaultParser();
 
     // create the Options
     Options options = new Options();
@@ -91,10 +103,12 @@ public class CqaEcml2016Scorer {
 
     CqaEcml2016Scorer ss = new CqaEcml2016Scorer(goldFile);
     
-    double recsBaseline = ss.getMap(predFile1);
+    double map = ss.getMap(predFile1);
+    double mrr = ss.getMrr(predFile1);
     
     
-    System.out.format("MAP value: %f%n", recsBaseline);
+    System.out.format("MAP = %f%n", map);
+    System.out.format("MRR = %f%n", mrr);
   }
   
   
