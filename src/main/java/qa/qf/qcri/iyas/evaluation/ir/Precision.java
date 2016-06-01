@@ -12,12 +12,37 @@ import qa.qf.qcri.iyas.utils.U;
  * Qatar Computing Research Institute, 2016
  */
 public class Precision extends IrAbstract{
+
   
-  //TODO implement if if necessary. So far it is not and it could not be 
-  //exploited by computePrecisions efficiently
-//  public static double computePrecisionAtK(List<String> ranking, Map<String, Boolean> gold, int k) {
-//    return 0;
-//  }
+  /**
+   * Compute the precision at k.
+   * 
+   * @param ranking list of documents in the ranking; should be ordered by 
+   *    relevance and all the identifiers must exist in the gold map. 
+   * @param gold Documents id with boolean values: whether their are relevant or not.
+   * @param k 
+   * @return precision at k
+   */
+  public static double computePrecisionAtK(List<String> ranking, Map<String, Boolean> gold, int k) {
+    U.ifFalseCrash(k > 0, "k should be > 0");
+    U.ifFalseCrash(GoldContainsAllinRanking(ranking, gold), 
+       "At least one id in the predicted set is not included in the gold set");
+    
+    if (k > ranking.size()) {
+      System.out.format("Warning: k=%d is bigger than the size of the ranking\n", k);
+    }
+    double precision = 0.0;
+    int tp =0;
+    int i;
+    for (i=0; i<Math.min(ranking.size(), k); i++) {  
+      if (gold.get(ranking.get(i))) { 
+        tp++;         //if true, the document is relevant
+      } 
+    }
+    precision = tp*1.0 / (i);
+    return precision;
+  }
+
   
   /**
    * Compute the precision at k for k=[1,threshold]. The default threshold is 10.
@@ -49,7 +74,7 @@ public class Precision extends IrAbstract{
    */
   public static  double[] 
   computePrecisions(List<String> ranking, Map<String, Boolean> gold, int threshold) {
-    U.ifFalseCrash(threshold > 0, "The threshold should ge > 0");
+    U.ifFalseCrash(threshold > 0, "The threshold should be > 0");
     U.ifFalseCrash(GoldContainsAllinRanking(ranking, gold), 
        "There is at least one id in the predicted set which is not included in the gold set");
 
