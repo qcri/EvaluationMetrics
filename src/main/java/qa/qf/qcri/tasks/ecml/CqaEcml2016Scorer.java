@@ -11,15 +11,22 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import qa.qf.qcri.iyas.evaluation.ir.AveP;
 import qa.qf.qcri.iyas.evaluation.ir.MeanAvgPrecision;
 import qa.qf.qcri.iyas.evaluation.ir.MeanReciprocalRank;
+import qa.qf.qcri.iyas.evaluation.ir.Precision;
 
 
 /**
- * This class computes MAP for a given scored file given the reference 
- * relevance file for the SemEval 2016 test on community question answering. 
- * <br/> 
- * The class receives gold standard and prediction file and computes MAP
+ * This class computes different evaluation metrics for a score file, given the 
+ * reference relevance file for the ECML 2016 challenge on community question 
+ * answering. The included metrics are:
+ * <ul>
+ * <li> MAP - mean average precision
+ * <li> MRR - mean reciprocal rank
+ * <li> P@1 - (average) precision at ranking 1
+ * <li> P@5 - (average) precision at ranking 5
+ * </ul> 
  * 
  * @author albarron
  * Qatar Computing Research Institute, 2016
@@ -35,10 +42,7 @@ public class CqaEcml2016Scorer {
    */
   public CqaEcml2016Scorer(String goldFile) {
     goldLabels = CqaEcml2016ScoreFileReader.getLabels(goldFile);
-
   }
-
-
   
   /**
    * Compute all the average precision values necessary to further compute the 
@@ -68,6 +72,23 @@ public class CqaEcml2016Scorer {
       lRankings.add(rankings.get(k));
     }
     return MeanReciprocalRank.computeWithMapRankings(lRankings, goldLabels);
+  }
+  
+  public double getPatK(String file, int k) {
+  //Map<String, Double> precs = new HashMap<String, Double>();
+    Map<String, Map<String, Double>> rankings = 
+        CqaEcml2016ScoreFileReader.getScoresPerQuery(file);
+    
+    double avgPrec=0.0;
+    int i = 0;
+    for (String key : rankings.keySet()) {
+      avgPrec +=Precision.computePrecisionAtK(
+          AveP.getKeysSortedByValue(rankings.get(key), AveP.DESCENDING),  
+          goldLabels, 
+          k);
+      i++;
+    }    
+    return avgPrec/i;
   }
   
   public static void main(String[] args) {
@@ -105,10 +126,13 @@ public class CqaEcml2016Scorer {
     
     double map = ss.getMap(predFile1);
     double mrr = ss.getMrr(predFile1);
-    
+    double pAt1 = ss.getPatK(predFile1, 1);
+    double pAt5 = ss.getPatK(predFile1, 5);
     
     System.out.format("MAP = %f%n", map);
     System.out.format("MRR = %f%n", mrr);
+    System.out.format("P@1 = %f%n", pAt1);
+    System.out.format("P@5 = %f%n", pAt5);
   }
   
   
