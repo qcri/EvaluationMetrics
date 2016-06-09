@@ -1,6 +1,7 @@
 package qa.qf.qcri.tasks.ecml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.apache.commons.cli.ParseException;
 import qa.qf.qcri.iyas.evaluation.ir.AveP;
 import qa.qf.qcri.iyas.evaluation.ir.MeanAvgPrecision;
 import qa.qf.qcri.iyas.evaluation.ir.MeanReciprocalRank;
+import qa.qf.qcri.iyas.evaluation.ir.PRF;
 import qa.qf.qcri.iyas.evaluation.ir.Precision;
 
 
@@ -91,6 +93,22 @@ public class CqaEcml2016Scorer {
     return avgPrec/i;
   }
   
+  public void PrecRecF(String file) {
+    Map<String, Map<String, Boolean>> labels = 
+        CqaEcml2016ScoreFileReader.getPredictionsPerQuery(file);
+  
+    Map<String, Boolean> labs = new HashMap<String, Boolean>();
+    for (Map<String, Boolean> m :  labels.values()) {
+      labs.putAll(m);
+    }
+    
+    PRF.load(labs, goldLabels);
+    System.out.format("P = %f%n", PRF.getPrecision());
+    System.out.format("R = %f%n", PRF.getRecall());
+    System.out.format("F1 = %f%n", PRF.getFmeasure());
+  }
+  
+  
   public static void main(String[] args) {
     String goldFile =null;;
     String predFile1=null;
@@ -129,10 +147,12 @@ public class CqaEcml2016Scorer {
     double pAt1 = ss.getPatK(predFile1, 1);
     double pAt5 = ss.getPatK(predFile1, 5);
     
+    
     System.out.format("MAP = %f%n", map);
     System.out.format("MRR = %f%n", mrr);
     System.out.format("P@1 = %f%n", pAt1);
     System.out.format("P@5 = %f%n", pAt5);
+    ss.PrecRecF(predFile1);
   }
   
   

@@ -114,6 +114,18 @@ public class CqaEcml2016ScoreFileReader {
     return scoreMap;
   }
   
+  public static Map<String, Map<String, Boolean>> getPredictionsPerQuery(String scoreFile) {
+    Map<String, Map<String, Boolean>> scoreMap = new LinkedHashMap<String, Map<String, Boolean>>();
+    List<ScoreRecord> records = loadDataset(scoreFile);
+    for (ScoreRecord sr : records) {
+      if (! scoreMap.containsKey(sr.queryID)) {
+        scoreMap.put(sr.queryID, new LinkedHashMap<String, Boolean>());
+      }
+      scoreMap.get(sr.queryID).put(sr.docID, sr.label);
+    }
+    return scoreMap;
+  }
+  
   /**
     TODO not sure if this works or even if it's useful at all 
    * Get the scores assigned to each instance in the score file, divided per ranking

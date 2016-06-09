@@ -14,7 +14,7 @@
       <configuration>
         <archive>
           <manifest>
-            <mainClass>fully.qualified.MainClass</mainClass>
+            <mainClass>qa.qf.qcri.tasks.ecml.CqaEcml2016Scorer</mainClass>
           </manifest>
         </archive>
         <descriptorRefs>
