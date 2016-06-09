@@ -6,13 +6,13 @@ import java.util.Map;
 import qa.qf.qcri.iyas.utils.U;
 
 /**
- * Implementation of standard Precision, Recall, and F-measure. Refer to 
- * {@link https://en.wikipedia.org/wiki/Precision_and_recall} for details
+ * Implementation of standard Accuracy, Precision, Recall, and F-measure. Refer to 
+ * {@link https://en.wikipedia.org/wiki/Precision_and_recall} for details.
  * 
  * @author albarron
  * Qatar Computing Research Institute, 2016
  */
-public class PRF {
+public class PRFA {
 
   /** Default value for beta in F_{beta}   */
   private static final double BETA_ONE = 1.0;
@@ -76,38 +76,26 @@ public class PRF {
     tp = 0.0;
     fp = 0.0;
     
-    for (int i = 0; i < preds.size(); i++) {
-      for (String k : preds.keySet()) {
-        if (preds.get(k) && gold.get(k)) {
-          tp +=1;
-        } else if (! preds.get(k) && gold.get(k)) {
-          tn +=1;
-        } else if (preds.get(k) && ! gold.get(k)) {
-          fp +=1;
-        } else if (! preds.get(k) && gold.get(k)) {
-          fn +=1;
-        }
+    for (String k : preds.keySet()) {
+      if (preds.get(k) && gold.get(k)) {
+        tp +=1;
+      } 
+      else if (! preds.get(k) && ! gold.get(k)) {
+        tn +=1;
+      } 
+      else if (preds.get(k) && ! gold.get(k)) {
+        fp +=1;
+      } else if (! preds.get(k) && gold.get(k)) {
+        fn +=1;
       }
     }
+
   }
-  
-  /**
-   * Compute precision for the given input. Before calling this 
-   * @return precision
-   */
-  public static double getPrecision() {
+
+  public static double getAccuracy() {
     U.ifFalseCrash(tp+fp+tn+fn != 0, 
         "The dataset was not set properly. Use load() first");
-    return tp / (tp + fp);
-  }
-  
-  /**
-   * @return recall
-   */
-  public static double getRecall() {
-    U.ifFalseCrash(tp+fp+tn+fn != 0, 
-        "The dataset was not set properly. Use load() first");
-    return tp / (tp + fn);
+    return (tp + tn)/ (tp + tn + fp + fn);
   }
   
   /**
@@ -131,5 +119,26 @@ public class PRF {
     }
     return f;
   }
+
+  
+  /**
+   * Compute precision for the given input. Before calling this 
+   * @return precision
+   */
+  public static double getPrecision() {
+    U.ifFalseCrash(tp+fp+tn+fn != 0, 
+        "The dataset was not set properly. Use load() first");
+    return tp / (tp + fp);
+  }
+  
+  /**
+   * @return recall
+   */
+  public static double getRecall() {
+    U.ifFalseCrash(tp+fp+tn+fn != 0, 
+        "The dataset was not set properly. Use load() first");
+    return tp / (tp + fn);
+  }
+  
   
 }

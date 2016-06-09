@@ -15,7 +15,7 @@ import org.apache.commons.cli.ParseException;
 import qa.qf.qcri.iyas.evaluation.ir.AveP;
 import qa.qf.qcri.iyas.evaluation.ir.MeanAvgPrecision;
 import qa.qf.qcri.iyas.evaluation.ir.MeanReciprocalRank;
-import qa.qf.qcri.iyas.evaluation.ir.PRF;
+import qa.qf.qcri.iyas.evaluation.ir.PRFA;
 import qa.qf.qcri.iyas.evaluation.ir.Precision;
 
 
@@ -102,10 +102,11 @@ public class CqaEcml2016Scorer {
       labs.putAll(m);
     }
     
-    PRF.load(labs, goldLabels);
-    System.out.format("P = %f%n", PRF.getPrecision());
-    System.out.format("R = %f%n", PRF.getRecall());
-    System.out.format("F1 = %f%n", PRF.getFmeasure());
+    PRFA.load(labs, goldLabels);
+    System.out.format("A = %f%n", PRFA.getAccuracy());
+    System.out.format("P = %f%n", PRFA.getPrecision());
+    System.out.format("R = %f%n", PRFA.getRecall());
+    System.out.format("F1 = %f%n", PRFA.getFmeasure());
   }
   
   
