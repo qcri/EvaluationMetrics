@@ -42,8 +42,8 @@ public class PRFA {
   public static void load(List<Map<String, Boolean>> preds, Map<String, Boolean> gold) {
     tp = 0.0;
     fp = 0.0;
-    tp = 0.0;
-    fp = 0.0;
+    tn = 0.0;
+    fn = 0.0;
     
     for (int i = 0; i < preds.size(); i++) {
       for (String k : preds.get(i).keySet()) {
@@ -73,8 +73,8 @@ public class PRFA {
   public static void load(Map<String, Boolean> preds, Map<String, Boolean> gold) {
     tp = 0.0;
     fp = 0.0;
-    tp = 0.0;
-    fp = 0.0;
+    tn = 0.0;
+    fn = 0.0;
     
     for (String k : preds.keySet()) {
       if (preds.get(k) && gold.get(k)) {
