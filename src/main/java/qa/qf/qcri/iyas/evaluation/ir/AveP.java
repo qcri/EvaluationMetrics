@@ -205,6 +205,12 @@ public class AveP extends IrAbstract{
       return getAveragePrecision(ranking,  gold);
     }
   
+  public static double
+  getAveragePrecisionAtK(Map<String, Double> predictions, Map<String, Boolean> gold, int k) {
+    List<String> ranking = getKeysSortedByValue(predictions, DESCENDING);
+    return getAveragePrecision(ranking.subList(0, Math.min(ranking.size(), k)),  gold); 
+  }
+  
   /**
    * Computation of average precision in which a Kronecker delta, looking  
    * at whether the current document in the ranking is relevant, is considered.

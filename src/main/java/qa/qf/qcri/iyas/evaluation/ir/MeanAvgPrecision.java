@@ -69,6 +69,19 @@ public class MeanAvgPrecision {
   }
   
   public static double
+  computeWithMapRankingsAtK(List<Map<String, Double>> rankings, Map<String, Boolean> gold, int k) {
+    double map = 0;
+    
+    for (int i =0; i< rankings.size(); i++) {
+      map += AveP.getAveragePrecisionAtK(rankings.get(i), gold, k);
+    }
+    
+    map /= rankings.size();
+    return map;
+  }
+  
+  
+  public static double
   computeWithListRankings(List<List<String>> rankings, Map<String, Boolean> gold) {
     double map = 0;
     
