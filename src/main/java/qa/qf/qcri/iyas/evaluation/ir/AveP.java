@@ -205,11 +205,11 @@ public class AveP extends IrAbstract{
       return getAveragePrecision(ranking,  gold);
     }
   
-  public static double
-  getAveragePrecisionAtK(Map<String, Double> predictions, Map<String, Boolean> gold, int k) {
-    List<String> ranking = getKeysSortedByValue(predictions, DESCENDING);
-    return getAveragePrecision(ranking.subList(0, Math.min(ranking.size(), k)),  gold); 
-  }
+//  public static double
+//  getAveragePrecisionAtK(Map<String, Double> predictions, Map<String, Boolean> gold, int k) {
+//    List<String> ranking = getKeysSortedByValue(predictions, DESCENDING);
+//    return getAveragePrecision(ranking.subList(0, Math.min(ranking.size(), k)),  gold); 
+//  }
   
   /**
    * Computation of average precision in which a Kronecker delta, looking  
@@ -227,7 +227,7 @@ public class AveP extends IrAbstract{
 
     for (int i=0; i < precisions.length; i++) {
       if (gold.get(predictions.get(i))) {
-      // System.out.println(recalls[i] -cRec);
+        //System.out.println(predictions.get(i) + " " + gold.get(predictions.get(i)));
         avPrec+=precisions[i];
         relevants++;
       }
