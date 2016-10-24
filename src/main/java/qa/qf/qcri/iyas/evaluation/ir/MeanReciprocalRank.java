@@ -12,7 +12,9 @@ import qa.qf.qcri.iyas.utils.U;
  */
 public class MeanReciprocalRank {
 
-  //////NEXT FROM PRecision
+  private static final int DEFAULT_RANKING_SIZE = 10;
+  
+  
   
   public static double 
   getReciprocalRank(final Map<String, Double> ranking, final Map<String, Boolean> gold) {
@@ -39,6 +41,9 @@ public class MeanReciprocalRank {
 
     double reciprocalRank = 0;
     for (int i=0; i<ranking.size(); i++) {  
+      if (i==10) {
+        continue;
+        }
       if (gold.get(ranking.get(i))) {
         // if true, the document is relevant and we finish
         reciprocalRank = 1.0/(i+1);
@@ -98,17 +103,32 @@ public class MeanReciprocalRank {
   
   /**
    * <br/>
-   * In this case, one single gold exists for all the rankings
+   * In this case, one single gold exists for all the rankings. In this default computation
+   * a default ranking size is considered: 10
    * @param predictons
    * @param gold
    * @return
    */
   public static double
   computeWithMapRankings(final List<Map<String, Double>> rankings, final Map<String, Boolean> gold) {
+    return computeWithMapRankings(rankings, gold, DEFAULT_RANKING_SIZE);
+  }
+  
+  /**
+   * In this case, one single gold exists for all the rankings
+   * @param predictons
+   * @param gold
+   * @param thres maximum number of instances considered in the ranking
+   * @return
+   */
+  public static double
+  computeWithMapRankings(final List<Map<String, Double>> rankings, 
+                        final Map<String, Boolean> gold, int thres) {
     double mrr = 0;
     for (int i =0; i< rankings.size(); i++) {
+      List<String> kk = AveP.getKeysSortedByValue(rankings.get(i), AveP.DESCENDING);
       mrr += getReciprocalRank(
-          AveP.getKeysSortedByValue(rankings.get(i), AveP.DESCENDING), 
+          kk.subList(0, Math.min(kk.size(), thres)), 
           gold);
     }
     
@@ -116,12 +136,18 @@ public class MeanReciprocalRank {
     return mrr;
   }
   
-  
   public static double
   computeWithListRankings(List<List<String>> rankings, Map<String, Boolean> gold) {
+    return computeWithListRankings(rankings, gold, DEFAULT_RANKING_SIZE);
+  }
+  
+  public static double
+  computeWithListRankings(List<List<String>> rankings, Map<String, Boolean> gold, int thres) {
     double mrr = 0;
     for (int i=0; i< rankings.size(); i++) {
-      mrr += getReciprocalRank(rankings.get(i), gold);
+      mrr += getReciprocalRank(
+          rankings.get(i).subList(0, Math.min(rankings.get(i).size(), thres)), 
+          gold);
     }
     mrr /= rankings.size();
     return mrr;
