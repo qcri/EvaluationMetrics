@@ -37,7 +37,7 @@ public class MeanReciprocalRank {
   getReciprocalRank(final List<String> ranking, final Map<String, Boolean> gold) {
 
     U.ifFalseCrash(IrAbstract.GoldContainsAllinRanking(ranking, gold), 
-       "There is at least one id in the predicted set which is not included in the gold set");
+       "I cannot compute MRR");
 
     double reciprocalRank = 0;
     for (int i=0; i<ranking.size(); i++) {  
